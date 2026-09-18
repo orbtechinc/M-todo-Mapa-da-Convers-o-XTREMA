@@ -1,0 +1,565 @@
+import React, { useState } from 'react';
+import { 
+  CheckCircle2, 
+  MessageCircle, 
+  Filter, 
+  Search, 
+  ShieldCheck, 
+  Banknote, 
+  Target,
+  ChevronRight,
+  XCircle,
+  CheckCircle,
+  AlertTriangle,
+  RotateCcw
+} from 'lucide-react';
+
+const steps = [
+  { id: 1, title: 'Rapport', icon: MessageCircle },
+  { id: 2, title: 'Qualificação', icon: Filter },
+  { id: 3, title: 'Diagnóstico', icon: Search },
+  { id: 4, title: 'Confirmação', icon: ShieldCheck },
+  { id: 5, title: 'Negociação', icon: Banknote },
+  { id: 6, title: 'Fechamento', icon: Target },
+];
+
+const diagnosisLevels = [
+  {
+    id: 1,
+    title: '1. Inconsciente',
+    desc: 'O cliente ainda não percebe claramente o problema ou a necessidade de mudança.',
+    action: 'Estrutura: crie um plano de ação baseado na estrutura da solução que você tem pra ele.',
+    color: 'bg-slate-700'
+  },
+  {
+    id: 2,
+    title: '2. Consciente do Problema',
+    desc: 'Reconhece que existe um problema, mas não compreende a dimensão/consequências.',
+    action: 'Ampliar a dor: aprofundar o impacto do problema e o custo de permanecer na situação atual.',
+    color: 'bg-orange-900/50'
+  },
+  {
+    id: 3,
+    title: '3. Consciente da Solução',
+    desc: 'Já entende que existe uma forma de resolver o problema.',
+    action: 'Storytelling: usar histórias e exemplos para apresentar a lógica da solução e criar compreensão.',
+    color: 'bg-amber-900/50'
+  },
+  {
+    id: 4,
+    title: '4. Consciente do Produto',
+    desc: 'Já entende a solução e está preparado para conhecer a oferta.',
+    action: 'Apresentação: explicar o produto, estrutura, entregáveis e como ajuda no resultado desejado.',
+    color: 'bg-emerald-900/50'
+  },
+  {
+    id: 5,
+    title: '5. Pronto para Comprar',
+    desc: 'Entende tudo, restando principalmente decidir se vai agir.',
+    action: 'Calculadora de inércia: comparar o custo de continuar parado com o custo/benefícios da decisão.',
+    color: 'bg-blue-900/50'
+  }
+];
+
+export default function App() {
+  const [activeStep, setActiveStep] = useState(1);
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-amber-500/30">
+      
+      {/* Header */}
+      <header className="bg-slate-900 border-b border-slate-800 p-6 sticky top-0 z-10 shadow-lg">
+        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-white tracking-tight">
+              ESTRUTURA DE VENDAS
+            </h1>
+            <p className="text-amber-500 font-medium text-sm mt-1">BY MARCOS MEDEIROS</p>
+          </div>
+          <div className="hidden md:flex items-center text-xs text-slate-400 bg-slate-800 px-4 py-2 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+            Call em andamento
+          </div>
+        </div>
+      </header>
+
+      {/* Main Layout */}
+      <main className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        {/* Sidebar Navigation */}
+        <div className="md:col-span-4 lg:col-span-3 space-y-2 relative">
+          <div className="sticky top-28">
+            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-2">
+              Mapa da Conversão
+            </h2>
+            <nav className="flex overflow-x-auto md:flex-col gap-2 pb-4 md:pb-0 hide-scrollbar">
+              {steps.map((step) => {
+                const Icon = step.icon;
+                const isActive = activeStep === step.id;
+                const isPast = activeStep > step.id;
+                
+                return (
+                  <button
+                    key={step.id}
+                    onClick={() => setActiveStep(step.id)}
+                    className={`flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl transition-all flex-shrink-0 md:flex-shrink
+                      ${isActive 
+                        ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-900/20 font-medium' 
+                        : isPast
+                          ? 'bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                          : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                      }`}
+                  >
+                    <Icon size={20} className={isActive ? 'text-white' : isPast ? 'text-amber-600' : 'text-slate-500'} />
+                    <span className="whitespace-nowrap">{step.title}</span>
+                    {isActive && <ChevronRight size={16} className="ml-auto opacity-70 hidden md:block" />}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+        </div>
+
+        {/* Content Area */}
+        <div className="md:col-span-8 lg:col-span-9">
+          <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl min-h-[500px] flex flex-col">
+            
+            {/* Dynamic Content Views */}
+            <div className="p-6 md:p-8 flex-1">
+              {activeStep === 1 && <RapportView />}
+              {activeStep === 2 && <QualificacaoView />}
+              {activeStep === 3 && <DiagnosticoView />}
+              {activeStep === 4 && <ConfirmacaoView />}
+              {activeStep === 5 && <NegociacaoView />}
+              {activeStep === 6 && <FechamentoView />}
+            </div>
+
+            {/* Next/Prev Navigation Footer */}
+            <div className="border-t border-slate-800 p-4 md:p-6 bg-slate-900/50 rounded-b-2xl flex justify-between items-center">
+              <button
+                onClick={() => setActiveStep(Math.max(1, activeStep - 1))}
+                disabled={activeStep === 1}
+                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white disabled:opacity-30 transition-colors"
+              >
+                Voltar
+              </button>
+              
+              {activeStep < steps.length ? (
+                <button
+                  onClick={() => setActiveStep(Math.min(steps.length, activeStep + 1))}
+                  className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-slate-700"
+                >
+                  Próxima Etapa <ChevronRight size={16} />
+                </button>
+              ) : (
+                <div className="text-amber-500 flex items-center gap-2 font-medium">
+                  <Target size={18} /> Finalizar Processo
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Footer credits */}
+          <div className="mt-8 text-center md:text-left text-slate-500 text-xs flex flex-col md:flex-row justify-between items-center gap-2 border-t border-slate-800/50 pt-4">
+            <p>Método Mapa da Conversão XTREMA</p>
+            <p>Desenvolvido e estruturado por <strong>Marcos Medeiros</strong> — Consultor High Ticket</p>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function RapportView() {
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">1. Rapport</h2>
+        <p className="text-slate-400 text-lg">Crie conexão e confiança com o cliente antes de entrar no diagnóstico.</p>
+      </div>
+      
+      <div className="bg-slate-800/50 rounded-xl p-6 border border-slate-700/50 mt-6 relative overflow-hidden">
+        <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+        <h3 className="text-amber-500 font-semibold mb-3 flex items-center gap-2">
+          <Target size={18} /> Objetivo Principal
+        </h3>
+        <p className="text-slate-300 leading-relaxed text-lg">
+          Deixar a conversa <strong className="text-white">natural</strong>, <strong className="text-white">confortável</strong> e <strong className="text-white">aberta</strong>.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700">
+          <span className="text-2xl block mb-2">🤝</span>
+          <h4 className="text-white font-medium mb-1">Quebra-gelo</h4>
+          <p className="text-sm text-slate-400">Assuntos do momento, cidade, clima, ou algo no background do cliente.</p>
+        </div>
+        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700">
+          <span className="text-2xl block mb-2">👂</span>
+          <h4 className="text-white font-medium mb-1">Escuta Ativa</h4>
+          <p className="text-sm text-slate-400">Preste atenção genuína nas primeiras respostas para usar depois.</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function QualificacaoView() {
+  const [decision, setDecision] = useState(null); // 'yes' | 'no' | null
+  const [finance, setFinance] = useState(null);   // 'yes' | 'no' | null
+
+  const reset = () => { setDecision(null); setFinance(null); };
+
+  const isDisqualified = decision === 'no' || finance === 'no';
+  const isQualified = decision === 'yes' && finance === 'yes';
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="flex justify-between items-start">
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-2">2. Qualificação</h2>
+          <p className="text-slate-400">Verifique os pilares fundamentais para avançar.</p>
+        </div>
+        {(decision || finance) && (
+          <button onClick={reset} className="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-lg transition-colors">
+            <RotateCcw size={14} /> Refazer
+          </button>
+        )}
+      </div>
+
+      <div className="space-y-8 mt-8">
+        
+        {/* Decision Power */}
+        <div className={`p-6 rounded-xl border transition-all duration-300 ${decision ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-800 border-slate-600 shadow-lg'}`}>
+          <h3 className="text-lg font-medium text-white mb-4">2.1 Condição Decisória</h3>
+          <p className="text-sm text-slate-400 mb-5">O cliente possui condições reais de tomar a decisão ou é o proprietário do dinheiro?</p>
+          
+          <div className="flex gap-4">
+            <button 
+              onClick={() => setDecision('yes')}
+              className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors flex justify-center items-center gap-2 border ${decision === 'yes' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/50' : decision === 'no' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
+            >
+              {decision === 'yes' && <CheckCircle2 size={18} />} Sim, possui
+            </button>
+            <button 
+              onClick={() => setDecision('no')}
+              className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors flex justify-center items-center gap-2 border ${decision === 'no' ? 'bg-red-600/20 text-red-400 border-red-500/50' : decision === 'yes' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
+            >
+              {decision === 'no' && <XCircle size={18} />} Não possui
+            </button>
+          </div>
+        </div>
+
+        {/* Financial Power (Only show if decision is yes) */}
+        {decision === 'yes' && (
+          <div className={`p-6 rounded-xl border transition-all duration-300 animate-in fade-in slide-in-from-top-4 ${finance ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-800 border-slate-600 shadow-lg'}`}>
+            <h3 className="text-lg font-medium text-white mb-4">2.2 Condição Financeira</h3>
+            <p className="text-sm text-slate-400 mb-5">Possui capacidade financeira real para investir e avançar?</p>
+            
+            <div className="flex gap-4">
+              <button 
+                onClick={() => setFinance('yes')}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors flex justify-center items-center gap-2 border ${finance === 'yes' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/50' : finance === 'no' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
+              >
+                {finance === 'yes' && <CheckCircle2 size={18} />} Tem condições
+              </button>
+              <button 
+                onClick={() => setFinance('no')}
+                className={`flex-1 py-3 px-4 rounded-lg font-medium transition-colors flex justify-center items-center gap-2 border ${finance === 'no' ? 'bg-red-600/20 text-red-400 border-red-500/50' : finance === 'yes' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
+              >
+                {finance === 'no' && <XCircle size={18} />} Não tem
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* Status Result */}
+        {isDisqualified && (
+           <div className="bg-red-950/40 border border-red-900/50 rounded-xl p-6 text-center animate-in zoom-in-95">
+             <AlertTriangle className="mx-auto text-red-500 mb-3" size={32} />
+             <h4 className="text-red-400 font-bold text-lg mb-1">Cliente Desqualificado</h4>
+             <p className="text-red-300/70 text-sm">Não atende aos critérios mínimos para avançar. Encerre de forma educada ou ofereça um downsell.</p>
+           </div>
+        )}
+
+        {isQualified && (
+           <div className="bg-emerald-950/30 border border-emerald-900/50 rounded-xl p-6 text-center animate-in zoom-in-95">
+             <CheckCircle className="mx-auto text-emerald-500 mb-3" size={32} />
+             <h4 className="text-emerald-400 font-bold text-lg mb-1">Cliente Qualificado!</h4>
+             <p className="text-emerald-300/70 text-sm">Atende aos critérios decisórios e financeiros. Prossiga para o diagnóstico.</p>
+           </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function DiagnosticoView() {
+  const [activeLevel, setActiveLevel] = useState(1);
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col h-full">
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">3. Diagnóstico</h2>
+        <p className="text-slate-400">Entenda o momento, identifique necessidades e o nível de consciência.</p>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-4 flex-1">
+        
+        {/* Levels List */}
+        <div className="lg:col-span-5 space-y-3">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase mb-3">Níveis de Consciência</h3>
+          {diagnosisLevels.map((level) => (
+            <button
+              key={level.id}
+              onClick={() => setActiveLevel(level.id)}
+              className={`w-full text-left p-4 rounded-xl border transition-all duration-200 ${
+                activeLevel === level.id 
+                  ? `${level.color} border-amber-500/50 shadow-md`
+                  : 'bg-slate-800 border-slate-700 hover:bg-slate-750'
+              }`}
+            >
+              <h4 className={`font-semibold ${activeLevel === level.id ? 'text-white' : 'text-slate-300'}`}>
+                {level.title}
+              </h4>
+            </button>
+          ))}
+        </div>
+
+        {/* Level Details */}
+        <div className="lg:col-span-7">
+          {diagnosisLevels.map((level) => (
+             activeLevel === level.id && (
+              <div key={level.id} className="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 h-full animate-in fade-in zoom-in-95 duration-300 flex flex-col">
+                <span className="inline-block px-3 py-1 bg-slate-900 rounded-full text-xs font-medium text-slate-400 w-max mb-4">
+                  Nível {level.id}
+                </span>
+                
+                <h3 className="text-2xl font-bold text-white mb-4">{level.title.substring(3)}</h3>
+                
+                <div className="space-y-6 flex-1">
+                  <div>
+                    <h4 className="text-sm text-slate-500 uppercase font-semibold mb-2">Comportamento</h4>
+                    <p className="text-slate-300 text-lg leading-relaxed">{level.desc}</p>
+                  </div>
+                  
+                  <div className="bg-slate-900/80 rounded-xl p-5 border border-slate-700/50 relative overflow-hidden">
+                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+                    <h4 className="text-amber-500 font-semibold mb-2 flex items-center gap-2">
+                      <Target size={16} /> Como conduzir
+                    </h4>
+                    <p className="text-slate-200">{level.action}</p>
+                  </div>
+                </div>
+              </div>
+             )
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ConfirmacaoView() {
+  const [checks, setChecks] = useState({
+    sim1: false,
+    sim2: false,
+    sim3: false
+  });
+
+  const toggleCheck = (key) => setChecks(prev => ({ ...prev, [key]: !prev[key] }));
+
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">4. Confirmação</h2>
+        <p className="text-slate-400">Consolide a decisão emocional e racional antes do fechamento.</p>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+        
+        {/* Heaven and Hell */}
+        <div className="space-y-4">
+          <h3 className="text-lg font-medium text-white mb-4">Contraste de Cenários</h3>
+          
+          <div className="bg-gradient-to-br from-emerald-900/20 to-slate-900 border border-emerald-900/30 p-5 rounded-xl">
+            <h4 className="text-emerald-400 font-bold flex items-center gap-2 mb-2">
+              ✨ O Céu (O Sonho)
+            </h4>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Excitar o lead: o objetivo é escavar até que ele fale a real motivação dele que vem antes da solução em si.
+            </p>
+          </div>
+
+          <div className="bg-gradient-to-br from-red-900/20 to-slate-900 border border-red-900/30 p-5 rounded-xl">
+            <h4 className="text-red-400 font-bold flex items-center gap-2 mb-2">
+              🔥 O Inferno (A Transformação)
+            </h4>
+            <p className="text-slate-400 text-sm leading-relaxed">
+              Fazê-lo enxergar de forma sutil a ineficiência de ficar parado onde está. Escave até achar qual é a verdadeira transformação que ele precisa.
+            </p>
+          </div>
+        </div>
+
+        {/* The 3 Yeses */}
+        <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
+          <h3 className="text-lg font-medium text-white mb-1">Estratégia dos "3 Sims"</h3>
+          <p className="text-xs text-slate-400 mb-6">Obtenha micro-confirmações ao longo da conversa.</p>
+          
+          <div className="space-y-3">
+            {[
+              { id: 'sim1', label: 'Validação do Plano', desc: '"O plano de ação que criamos juntos hoje faz sentido pra te ajudar a superar seus desafios e resolver os seus problemas?"' },
+              { id: 'sim2', label: 'Os Dois Caminhos', desc: '"Temos 2 caminhos: 1. Ficar parado e ter [X] custo até [X] dia. 2. Aplicar o que montamos comigo e conseguir o resultado [X] em [X] dias."' },
+              { id: 'sim3', label: 'A Escolha do Guia', desc: '"Você tem certeza que eu sou a pessoa certa que vai te ajudar a chegar nesse resultado [X] em [X] dias mesmo?"' }
+            ].map((item, index) => (
+              <label 
+                key={item.id}
+                className={`flex items-start gap-4 p-4 rounded-lg border cursor-pointer transition-all duration-200
+                  ${checks[item.id] ? 'bg-amber-900/20 border-amber-500/50' : 'bg-slate-900/50 border-slate-700 hover:bg-slate-800'}`}
+              >
+                <div className="mt-0.5">
+                  <div className={`w-6 h-6 rounded border flex items-center justify-center transition-colors
+                    ${checks[item.id] ? 'bg-amber-500 border-amber-500 text-white' : 'border-slate-500 bg-slate-800'}`}>
+                    {checks[item.id] && <CheckCircle2 size={16} />}
+                  </div>
+                  {/* hidden checkbox */}
+                  <input type="checkbox" className="hidden" checked={checks[item.id]} onChange={() => toggleCheck(item.id)} />
+                </div>
+                <div>
+                  <span className={`block font-medium ${checks[item.id] ? 'text-amber-400' : 'text-slate-200'}`}>
+                    Sim {index + 1}: {item.label}
+                  </span>
+                  <span className="text-sm text-slate-500">{item.desc}</span>
+                </div>
+              </label>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
+function NegociacaoView() {
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">5. Negociação</h2>
+        <p className="text-slate-400">Tratar questões de preço, condições e percepção de valor.</p>
+      </div>
+
+      <div className="mt-8 bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+        <div className="bg-amber-600/10 border-b border-amber-900/30 p-6 flex items-center gap-4">
+          <div className="bg-amber-500/20 p-3 rounded-xl text-amber-500">
+            <Banknote size={32} />
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white">Ancoragem de Valor</h3>
+            <p className="text-slate-400 text-sm mt-1">Estabeleça referências claras antes de falar o preço.</p>
+          </div>
+        </div>
+        
+        <div className="p-6 md:p-8 space-y-6">
+          <p className="text-slate-300 leading-relaxed text-lg">
+            O objetivo da ancoragem é estabelecer uma referência de valor que ajude o cliente a compreender o 
+            investimento <strong className="text-amber-400">dentro do contexto da solução e do resultado buscado</strong>.
+          </p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+            <div className="bg-slate-900 p-6 rounded-xl border border-slate-700/50 flex flex-col">
+              <span className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-2 block">Passo 1</span>
+              <h4 className="text-white text-lg font-medium mb-3">Ancoragem da Solução</h4>
+              <p className="text-sm text-slate-400 leading-relaxed mb-3">
+                Faça uma ancoragem de valor baseada no custo da solução.
+              </p>
+              <p className="text-sm text-slate-400 leading-relaxed">
+                <strong>Exemplo:</strong> Se a sua hora hoje custa "1 mil reais", então 12 horas suas valem "12 mil", crie um acompanhamento de x meses por apenas "4 mil".
+              </p>
+            </div>
+            <div className="bg-slate-900 p-6 rounded-xl border border-amber-700/30 shadow-[0_0_15px_rgba(245,158,11,0.05)] flex flex-col">
+              <span className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-2 block">Passo 2</span>
+              <h4 className="text-white text-lg font-medium mb-3">Ancoragem da Transformação</h4>
+              <p className="text-sm text-slate-300 leading-relaxed mb-3">
+                Faça uma ancoragem de valor baseada no custo da transformação.
+              </p>
+              <p className="text-sm text-slate-300 leading-relaxed">
+                <strong>Exemplo:</strong> Se a transformação dele é um veículo de "100 mil", Faça ele admitir que não tem condição para adquirir hoje, mas que com sua solução ele terá essa condição em X dias.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FechamentoView() {
+  return (
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div>
+        <h2 className="text-2xl font-bold text-white mb-2">6. Fechamento</h2>
+        <p className="text-slate-400">Momento de conduzir o cliente à decisão final e quebrar as últimas objeções.</p>
+      </div>
+
+      <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        {/* Action column */}
+        <div className="space-y-6">
+          <div className="bg-gradient-to-r from-amber-600 to-orange-600 rounded-xl p-6 text-white shadow-lg shadow-amber-900/20">
+            <h3 className="text-xl font-bold mb-2 flex items-center gap-2">
+              <Target /> A Chamada para Ação
+            </h3>
+            <p className="text-amber-50 leading-relaxed">
+              Faça a oferta de forma clara, direta e <strong className="text-white">fique em silêncio</strong>. 
+              Quem fala primeiro após o preço geralmente perde o controle da negociação.
+            </p>
+          </div>
+
+          <div className="bg-slate-800 rounded-xl p-6 border border-slate-700">
+            <h4 className="font-semibold text-white mb-4">Postura Recomendada</h4>
+            <ul className="space-y-3">
+              <li className="flex items-start gap-3 text-slate-300">
+                <CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" />
+                <span>Mantenha total confiança e tom de voz firme.</span>
+              </li>
+              <li className="flex items-start gap-3 text-slate-300">
+                <CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" />
+                <span>Tenha o link de pagamento ou contrato pronto para envio imediato.</span>
+              </li>
+              <li className="flex items-start gap-3 text-slate-300">
+                <CheckCircle2 size={18} className="text-emerald-500 shrink-0 mt-0.5" />
+                <span>Naturalize o processo de compra.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Objections Column */}
+        <div>
+          <h3 className="text-lg font-medium text-white mb-4">Quebra de Objeções</h3>
+          <p className="text-sm text-slate-400 mb-4">Identifique o verdadeiro motivo da hesitação e responda com base no diagnóstico.</p>
+          
+          <div className="space-y-3">
+            {[
+              { obj: 'Está caro / Não tenho dinheiro', ans: 'Retorne à calculadora de inércia e ancoragem. Isole a objeção ("Além do valor, há algo mais?").' },
+              { obj: 'Vou pensar', ans: 'Pergunte diretamente: "Geralmente o vou pensar significa dúvida. O que não ficou claro?"' },
+              { obj: 'Preciso falar com meu sócio/cônjuge', ans: 'Agende uma segunda call com todos os decisores (Deveria ter sido mapeado na Qualificação).' },
+              { obj: 'Não é o momento', ans: 'Lembre do "Inferno". Quanto custa esperar mais 6 meses na situação atual?' },
+            ].map((item, i) => (
+              <div key={i} className="bg-slate-900 border border-slate-700 rounded-lg p-4 hover:border-slate-500 transition-colors">
+                <h5 className="font-semibold text-red-400 mb-2 flex items-center gap-2 text-sm">
+                  <XCircle size={14} /> {item.obj}
+                </h5>
+                <p className="text-sm text-slate-300 border-l-2 border-slate-700 pl-3">
+                  {item.ans}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+}
