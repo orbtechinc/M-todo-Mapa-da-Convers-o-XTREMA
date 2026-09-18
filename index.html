@@ -1,574 +1,613 @@
-import React, { useState } from 'react';
-import { 
-  CheckCircle2, 
-  MessageCircle, 
-  Filter, 
-  Search, 
-  ShieldCheck, 
-  Banknote, 
-  Target,
-  ChevronRight,
-  XCircle,
-  CheckCircle,
-  AlertTriangle,
-  RotateCcw,
-  Lock,
-  Zap,
-  BarChart
-} from 'lucide-react';
-
-const steps = [
-  { id: 1, title: 'Rapport', icon: MessageCircle },
-  { id: 2, title: 'Qualificação', icon: Filter },
-  { id: 3, title: 'Diagnóstico', icon: Search },
-  { id: 4, title: 'Confirmação', icon: ShieldCheck },
-  { id: 5, title: 'Negociação', icon: Banknote },
-  { id: 6, title: 'Fechamento', icon: Target },
-];
-
-const diagnosisLevels = [
-  {
-    id: 1,
-    title: '1. Inconsciente',
-    action: 'FRAMEWORK: Criar plano de ação estrutural baseado na solução.',
-    color: 'bg-slate-700'
-  },
-  {
-    id: 2,
-    title: '2. Consciente do Problema',
-    action: 'FRAMEWORK: Ampliação da dor e ancoragem do custo da inércia.',
-    color: 'bg-orange-900/50'
-  },
-  {
-    id: 3,
-    title: '3. Consciente da Solução',
-    action: 'FRAMEWORK: Lógica de transição via Storytelling (Casos reais).',
-    color: 'bg-amber-900/50'
-  },
-  {
-    id: 4,
-    title: '4. Consciente do Produto',
-    action: 'FRAMEWORK: Apresentação direta (Estrutura e Entregáveis).',
-    color: 'bg-emerald-900/50'
-  },
-  {
-    id: 5,
-    title: '5. Pronto para Comprar',
-    action: 'FRAMEWORK: Calculadora de Inércia + Call to Action Direto.',
-    color: 'bg-blue-900/50'
-  }
-];
-
-export default function App() {
-  const [activeStep, setActiveStep] = useState(1);
-
-  return (
-    <div className="min-h-screen bg-slate-950 text-slate-200 font-sans selection:bg-amber-500/30">
-      
-      {/* Header */}
-      <header className="bg-slate-900 border-b border-slate-800 p-6 sticky top-0 z-10 shadow-lg">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-3">
-              ESTRUTURA DE VENDAS
-              <span className="bg-amber-500 text-slate-900 text-xs px-2 py-0.5 rounded font-black tracking-wider uppercase">Beta LITE</span>
-            </h1>
-            <p className="text-amber-500 font-medium text-sm mt-1">MÉTODO XTREMA • MARCOS MEDEIROS</p>
-          </div>
-          <div className="hidden md:flex items-center gap-4">
-            <button className="flex items-center gap-2 text-xs font-bold text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 px-4 py-2 rounded-lg transition-colors border border-amber-500/20">
-              <Zap size={14} /> DESBLOQUEAR VERSÃO PRO
-            </button>
-            <div className="flex items-center text-xs text-slate-400 bg-slate-800 px-4 py-2 rounded-full">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
-              Call Status: ON
-            </div>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Layout */}
-      <main className="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6">
+<!DOCTYPE html>
+<html lang="pt-BR" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estrutura de Vendas • Método XTREMA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; } /* bg-slate-950 */
+        ::selection { background-color: rgba(245, 158, 11, 0.3); } /* selection:bg-amber-500/30 */
         
-        {/* Sidebar Navigation */}
-        <div className="md:col-span-4 lg:col-span-3 space-y-2 relative">
-          <div className="sticky top-28">
-            <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-2">
-              Roadmap da Call
-            </h2>
-            <nav className="flex overflow-x-auto md:flex-col gap-2 pb-4 md:pb-0 hide-scrollbar">
-              {steps.map((step) => {
-                const Icon = step.icon;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        
+        /* Utility classes for JS toggling */
+        .hidden-view { display: none !important; }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-800 p-4 md:p-6 sticky top-0 z-20 shadow-lg">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-white tracking-tight flex items-center gap-3">
+                    ESTRUTURA DE VENDAS
+                    <span class="bg-amber-500 text-slate-900 text-[10px] md:text-xs px-2 py-0.5 rounded font-black tracking-wider uppercase">Beta LITE</span>
+                </h1>
+                <p class="text-amber-500 font-medium text-xs md:text-sm mt-1">MÉTODO XTREMA • MARCOS MEDEIROS</p>
+            </div>
+            <div class="hidden md:flex items-center gap-4">
+                <button class="flex items-center gap-2 text-xs font-bold text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 px-4 py-2 rounded-lg transition-colors border border-amber-500/20 cursor-not-allowed group relative">
+                    <i data-lucide="zap" class="w-4 h-4"></i> DESBLOQUEAR VERSÃO PRO
+                    <span class="absolute top-10 left-1/2 -translate-x-1/2 bg-slate-800 text-slate-300 px-3 py-1 rounded text-[10px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-30">Em breve</span>
+                </button>
+                <div class="flex items-center text-xs text-slate-400 bg-slate-800 px-4 py-2 rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+                    Call Status: ON
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="max-w-6xl mx-auto p-4 md:p-6 grid grid-cols-1 md:grid-cols-12 gap-6 relative">
+        
+        <!-- Sidebar Navigation -->
+        <div class="md:col-span-4 lg:col-span-3 space-y-2">
+            <div class="sticky top-28">
+                <h2 class="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 px-2">Roadmap da Call</h2>
+                <nav id="sidebar-nav" class="flex overflow-x-auto md:flex-col gap-2 pb-4 md:pb-0 hide-scrollbar">
+                    <!-- Nav items generated via JS -->
+                </nav>
+
+                <!-- UPGRADE TEASER -->
+                <div class="mt-8 p-5 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 relative overflow-hidden hidden md:block group cursor-not-allowed">
+                    <div class="absolute -right-4 -top-4 text-slate-700/30 transform rotate-12 group-hover:scale-110 transition-transform">
+                        <i data-lucide="bar-chart" class="w-24 h-24"></i>
+                    </div>
+                    <h4 class="text-white font-bold text-sm mb-2 flex items-center gap-2 relative z-10">
+                        <i data-lucide="lock" class="w-4 h-4 text-amber-500"></i> IA XTREMA PRO
+                    </h4>
+                    <ul class="text-[11px] text-slate-400 space-y-2 relative z-10 leading-relaxed">
+                        <li>• Dashboard de Conversão</li>
+                        <li>• Análise de Objeções via IA</li>
+                        <li>• CRM / Qualificação Automática</li>
+                        <li>• Resumo de Gatilhos e Emoções</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="md:col-span-8 lg:col-span-9">
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl min-h-[500px] flex flex-col relative">
+                
+                <!-- Dynamic Content Views Container -->
+                <div id="views-container" class="p-6 md:p-8 flex-1">
+                    
+                    <!-- Passo 1: Rapport -->
+                    <div id="view-1" class="step-view animate-fade-in">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-white mb-1">1. Rapport & Setup</h2>
+                                <p class="text-slate-400 text-sm">Estabeleça o controle e o frame da reunião.</p>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex gap-4 items-start">
+                                <div class="bg-slate-700/50 p-2 rounded-lg text-slate-300"><i data-lucide="message-circle" class="w-5 h-5"></i></div>
+                                <div>
+                                    <h4 class="text-white text-sm font-bold mb-1">Ancoragem de Contexto</h4>
+                                    <p class="text-xs text-slate-400 leading-relaxed">Assuntos do momento, background visual do cliente, cidade. Conexão natural.</p>
+                                </div>
+                            </div>
+                            <div class="bg-slate-800 p-5 rounded-xl border border-slate-700 flex gap-4 items-start">
+                                <div class="bg-slate-700/50 p-2 rounded-lg text-slate-300"><i data-lucide="target" class="w-5 h-5"></i></div>
+                                <div>
+                                    <h4 class="text-white text-sm font-bold mb-1">Escuta Ativa Primária</h4>
+                                    <p class="text-xs text-slate-400 leading-relaxed">Captar jargões e tom de voz para espelhamento imediato.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 bg-slate-900/50 border border-slate-800 p-4 rounded-xl flex items-center justify-between opacity-60">
+                            <div class="flex items-center gap-3">
+                                <i data-lucide="lock" class="w-4 h-4 text-slate-500"></i>
+                                <span class="text-xs text-slate-400 font-medium">Pré-framing Automático e Análise de Perfil Emocional da Call</span>
+                            </div>
+                            <span class="text-[10px] bg-slate-800 font-bold px-2 py-1 rounded text-slate-500">PRO</span>
+                        </div>
+                    </div>
+
+                    <!-- Passo 2: Qualificação -->
+                    <div id="view-2" class="step-view hidden-view animate-fade-in">
+                        <div class="flex justify-between items-start mb-6">
+                            <div>
+                                <h2 class="text-2xl font-bold text-white mb-1">2. Filtro de Qualificação</h2>
+                                <p class="text-slate-400 text-sm">Validação rápida dos pilares operacionais (B.A.N.T).</p>
+                            </div>
+                            <button onclick="resetQualificacao()" id="btn-reset-qual" class="hidden text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-lg transition-colors">
+                                <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i> Reset
+                            </button>
+                        </div>
+
+                        <div class="space-y-6">
+                            <!-- Decision Power -->
+                            <div id="box-decision" class="p-5 rounded-xl border transition-all duration-300 bg-slate-800 border-slate-600">
+                                <h3 class="text-sm font-bold text-white mb-4">A. Poder Decisório</h3>
+                                <div class="flex flex-col md:flex-row gap-4">
+                                    <button onclick="setQualDecision('yes')" id="btn-dec-yes" class="flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-slate-700 hover:bg-slate-600 border-slate-600 text-white">
+                                        Titular da Decisão
+                                    </button>
+                                    <button onclick="setQualDecision('no')" id="btn-dec-no" class="flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-slate-700 hover:bg-slate-600 border-slate-600 text-white">
+                                        Terceirizado/Dependente
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Financial Power -->
+                            <div id="box-finance" class="p-5 rounded-xl border transition-all duration-300 bg-slate-800 border-slate-600 hidden animate-fade-in">
+                                <h3 class="text-sm font-bold text-white mb-4">B. Capacidade de Investimento</h3>
+                                <div class="flex flex-col md:flex-row gap-4">
+                                    <button onclick="setQualFinance('yes')" id="btn-fin-yes" class="flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-slate-700 hover:bg-slate-600 border-slate-600 text-white">
+                                        Possui Capital Alocado
+                                    </button>
+                                    <button onclick="setQualFinance('no')" id="btn-fin-no" class="flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-slate-700 hover:bg-slate-600 border-slate-600 text-white">
+                                        Sem Viabilidade
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Status Result -->
+                            <div id="result-disqualified" class="hidden bg-red-950/40 border border-red-900/50 rounded-xl p-4 text-center animate-fade-in flex items-center justify-center gap-3">
+                                <i data-lucide="alert-triangle" class="text-red-500 w-6 h-6"></i>
+                                <div class="text-left">
+                                    <h4 class="text-red-400 font-bold text-sm">Desqualificação Imediata</h4>
+                                    <p class="text-red-300/70 text-xs">Não possui condições. Acionar protocolo de encerramento amigável.</p>
+                                </div>
+                            </div>
+
+                            <div id="result-qualified" class="hidden bg-emerald-950/30 border border-emerald-900/50 rounded-xl p-4 text-center animate-fade-in flex items-center justify-center gap-3">
+                                <i data-lucide="check-circle" class="text-emerald-500 w-6 h-6"></i>
+                                <div class="text-left">
+                                    <h4 class="text-emerald-400 font-bold text-sm">Lead Qualificado (Go)</h4>
+                                    <p class="text-emerald-300/70 text-xs">Condições aprovadas. Avançar para Mapeamento de Dores.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passo 3: Diagnóstico -->
+                    <div id="view-3" class="step-view hidden-view animate-fade-in h-full flex flex-col">
+                        <div class="mb-4">
+                            <h2 class="text-2xl font-bold text-white mb-1">3. Mapeamento e Diagnóstico</h2>
+                            <p class="text-slate-400 text-sm">Identifique o nível de consciência para ajustar o tom da call.</p>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1">
+                            <!-- Levels List -->
+                            <div class="lg:col-span-5 space-y-2" id="diag-buttons">
+                                <!-- Generated by JS -->
+                            </div>
+                            <!-- Level Action Prompt -->
+                            <div class="lg:col-span-7 h-full">
+                                <div id="diag-content-box" class="bg-slate-800/80 border border-amber-500/30 rounded-2xl p-6 h-full flex flex-col justify-center relative overflow-hidden transition-colors">
+                                    <div class="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
+                                    <h3 class="text-slate-500 text-[10px] uppercase font-bold tracking-wider mb-2">Instrução Tática (O Que Fazer)</h3>
+                                    <p id="diag-action-text" class="text-white text-base md:text-lg font-medium leading-relaxed">
+                                        <!-- Dynamic Text -->
+                                    </p>
+                                    
+                                    <!-- PRO Teaser inside action -->
+                                    <div class="mt-8 border border-slate-700/50 bg-slate-900 rounded-xl p-4 opacity-60 relative group cursor-not-allowed">
+                                        <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-[1px] flex items-center justify-center rounded-xl z-10">
+                                            <span class="text-xs font-bold text-slate-400 flex items-center gap-2"><i data-lucide="lock" class="w-3.5 h-3.5"></i> Assistente de Argumentação IA (PRO)</span>
+                                        </div>
+                                        <div class="h-16 text-slate-600 text-xs italic p-2">"Gera perguntas exatas para escavar a dor baseado na fala em tempo real..."</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passo 4: Confirmação -->
+                    <div id="view-4" class="step-view hidden-view animate-fade-in">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-1">4. Consolidação</h2>
+                            <p class="text-slate-400 text-sm">Contraste de cenários e os 3 micro-acordos.</p>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <!-- Heaven and Hell -->
+                            <div class="space-y-4">
+                                <div class="bg-emerald-950/20 border border-emerald-900/50 p-5 rounded-xl border-l-4 border-l-emerald-500">
+                                    <h4 class="text-emerald-400 font-bold flex items-center gap-2 mb-1 text-xs uppercase tracking-wider">
+                                        O Céu (O Sonho)
+                                    </h4>
+                                    <p class="text-slate-300 font-medium text-sm leading-relaxed">
+                                        Excitar o lead. O objetivo é escavar até que ele fale a real motivação dele que vem antes da solução.
+                                    </p>
+                                </div>
+                                <div class="bg-red-950/20 border border-red-900/50 p-5 rounded-xl border-l-4 border-l-red-500">
+                                    <h4 class="text-red-400 font-bold flex items-center gap-2 mb-1 text-xs uppercase tracking-wider">
+                                        O Inferno (A Transformação)
+                                    </h4>
+                                    <p class="text-slate-300 font-medium text-sm leading-relaxed">
+                                        Fazê-lo enxergar de forma sutil a ineficiência de ficar parado onde está. Escave até achar qual é a transformação.
+                                    </p>
+                                </div>
+                            </div>
+                            <!-- The 3 Yeses -->
+                            <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+                                <h3 class="text-xs font-bold text-amber-500 uppercase tracking-wider mb-4">Framework "3 SIMs"</h3>
+                                <div class="space-y-3" id="checks-container">
+                                    <!-- Checks via JS -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passo 5: Negociação -->
+                    <div id="view-5" class="step-view hidden-view animate-fade-in">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-1">5. Negociação</h2>
+                            <p class="text-slate-400 text-sm">Estabelecimento de referência de valor vs preço final.</p>
+                        </div>
+                        <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
+                            <div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-700/50">
+                                <!-- Passo 1 -->
+                                <div class="p-6 md:p-8 flex flex-col justify-center">
+                                    <span class="text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Passo 1</span>
+                                    <h4 class="text-white text-base font-bold mb-2">Ancoragem da Solução</h4>
+                                    <p class="text-xs text-slate-400 leading-relaxed">
+                                        Faça uma ancoragem de valor baseada no custo da solução.
+                                    </p>
+                                    <div class="mt-4 bg-slate-900/80 p-3 rounded-lg border border-slate-700/50">
+                                        <p class="text-xs text-slate-300 italic">
+                                            <strong class="text-amber-500 not-italic">EX:</strong> "Se a minha hora hoje custa 1 mil reais, então 12 horas minhas valem 12 mil, criei um acompanhamento de X meses por apenas 4 mil."
+                                        </p>
+                                    </div>
+                                </div>
+                                <!-- Passo 2 -->
+                                <div class="p-6 md:p-8 flex flex-col justify-center bg-gradient-to-br from-amber-900/10 to-transparent relative">
+                                    <span class="text-amber-500 text-[10px] font-bold uppercase tracking-wider mb-2">Passo 2</span>
+                                    <h4 class="text-white text-base font-bold mb-2">Ancoragem da Transformação</h4>
+                                    <p class="text-xs text-slate-400 leading-relaxed">
+                                        Faça uma ancoragem de valor baseada no custo da transformação.
+                                    </p>
+                                    <div class="mt-4 bg-amber-950/30 p-3 rounded-lg border border-amber-900/30">
+                                        <p class="text-xs text-slate-300 italic">
+                                            <strong class="text-amber-500 not-italic">EX:</strong> "Se a transformação dele é um veículo de 100 mil, faça-o admitir que não tem condição de adquirir hoje, mas que com sua solução ele terá em X dias."
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passo 6: Fechamento -->
+                    <div id="view-6" class="step-view hidden-view animate-fade-in">
+                        <div class="mb-6">
+                            <h2 class="text-2xl font-bold text-white mb-1">6. Fechamento</h2>
+                            <p class="text-slate-400 text-sm">Call to Action (CTA) definitivo e manobras táticas.</p>
+                        </div>
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            <!-- Action column -->
+                            <div class="space-y-4">
+                                <div class="bg-slate-800 border-l-4 border-amber-500 rounded-r-xl p-6 shadow-lg">
+                                    <h3 class="text-amber-500 text-[10px] font-bold uppercase tracking-wider mb-1">Comando Final</h3>
+                                    <p class="text-white text-lg font-medium mt-2">
+                                        Faça a oferta de forma direta e <br/>
+                                        <strong class="text-amber-400 text-xl font-black uppercase tracking-wide">Fique em Silêncio.</strong>
+                                    </p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-xl p-5 border border-slate-700 text-xs text-slate-300 leading-relaxed">
+                                    <strong class="text-white mb-2 block text-sm">O Protocolo de Ação:</strong>
+                                    <ul class="space-y-1">
+                                        <li>1. Confiança e tom de voz inabalável.</li>
+                                        <li>2. Link/Contrato aberto engatilhado.</li>
+                                        <li>3. Aja como se a venda já estivesse 100% concretizada.</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <!-- Objections Column -->
+                            <div class="bg-slate-900 border border-slate-700 rounded-xl p-5 relative overflow-hidden flex flex-col">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-xs font-bold text-white uppercase tracking-wider">Manobras de Contorno</h3>
+                                </div>
+                                <div class="space-y-2 flex-1">
+                                    <div class="border border-slate-800 bg-slate-800/30 rounded-lg p-3">
+                                        <h5 class="font-bold text-slate-300 text-[11px] mb-1">Objeção: Financeira (Está caro / Sem $ )</h5>
+                                        <p class="text-[11px] text-slate-400">Isole a objeção: "Tirando a questão do valor, tem algo mais que te impede de avançar hoje?"</p>
+                                    </div>
+                                    <div class="border border-slate-800 bg-slate-800/30 rounded-lg p-3">
+                                        <h5 class="font-bold text-slate-300 text-[11px] mb-1">Objeção: Insegurança (Vou pensar)</h5>
+                                        <p class="text-[11px] text-slate-400">Drible: "Geralmente quem diz isso ficou com alguma dúvida. O que faltou esclarecer pra você?"</p>
+                                    </div>
+                                </div>
+                                <!-- Premium overlay -->
+                                <div class="mt-4 pt-4 border-t border-slate-800 text-center">
+                                    <button class="text-[10px] text-amber-500 font-bold flex justify-center items-center gap-1 w-full opacity-60 cursor-not-allowed">
+                                        <i data-lucide="lock" class="w-3 h-3"></i> Módulo PRO: Script de Reversão para 15+ Objeções
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Navigation -->
+                <div class="border-t border-slate-800 p-4 md:p-6 bg-slate-900/50 rounded-b-2xl flex justify-between items-center">
+                    <button onclick="prevStep()" id="btn-prev" class="px-4 py-2 text-xs md:text-sm font-medium text-slate-500 hover:text-white transition-colors cursor-not-allowed" disabled>
+                        Voltar
+                    </button>
+                    
+                    <button onclick="nextStep()" id="btn-next" class="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs md:text-sm font-bold transition-colors flex items-center gap-2 border border-slate-700 shadow-lg">
+                        <span>Próxima Etapa</span> <i data-lucide="chevron-right" class="w-4 h-4"></i>
+                    </button>
+
+                    <div id="finish-msg" class="hidden text-amber-500 flex items-center gap-2 font-bold text-sm">
+                        <i data-lucide="target" class="w-4 h-4"></i> Fechar Contrato
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 text-center text-slate-600 text-[10px] uppercase tracking-wider font-semibold">
+                Uso Exclusivo • Treinamento de Vendas
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Data Configuration
+        const steps = [
+            { id: 1, title: 'Rapport', icon: 'message-circle' },
+            { id: 2, title: 'Qualificação', icon: 'filter' },
+            { id: 3, title: 'Diagnóstico', icon: 'search' },
+            { id: 4, title: 'Confirmação', icon: 'shield-check' },
+            { id: 5, title: 'Negociação', icon: 'banknote' },
+            { id: 6, title: 'Fechamento', icon: 'target' }
+        ];
+
+        const diagnosisLevels = [
+            { id: 1, title: '1. Inconsciente', action: 'ESTRUTURA: Crie um plano de ação estrutural baseado na estrutura da solução que você tem pra ele.' },
+            { id: 2, title: '2. Consciente do Problema', action: 'ESTRUTURA: Ampliação da dor e ancoragem visual do custo da inércia.' },
+            { id: 3, title: '3. Consciente da Solução', action: 'ESTRUTURA: Mostrar a lógica de transição via Storytelling (Casos reais/exemplos).' },
+            { id: 4, title: '4. Consciente do Produto', action: 'ESTRUTURA: Apresentação direta (Estrutura, mecânica e Entregáveis).' },
+            { id: 5, title: '5. Pronto para Comprar', action: 'ESTRUTURA: Calculadora de Inércia + Call to Action Direto e Imediato.' }
+        ];
+
+        const confirmQuestions = [
+            { id: 'sim1', text: '"O plano de ação que criamos juntos hoje faz sentido pra te ajudar a superar seus desafios e resolver os seus problemas?"' },
+            { id: 'sim2', text: '"Temos 2 caminhos agora. Caminho 1: você pode ficar parado e isso tem X custo até X dia. Caminho 2: você pode aplicar o que montamos junto comigo e conseguiremos o resultado X em X dias."' },
+            { id: 'sim3', text: '"Você tem certeza que eu sou a pessoa certa que vai te ajudar a chegar nesse resultado X em X dias mesmo?"' }
+        ];
+
+        // State Variables
+        let activeStep = 1;
+        let qualDecision = null;
+        let qualFinance = null;
+        let activeDiagLevel = 1;
+        let checkState = { sim1: false, sim2: false, sim3: false };
+
+        // DOM Elements
+        const sidebarNav = document.getElementById('sidebar-nav');
+        const btnPrev = document.getElementById('btn-prev');
+        const btnNext = document.getElementById('btn-next');
+        const finishMsg = document.getElementById('finish-msg');
+        
+        // --- Initialization ---
+        function init() {
+            renderSidebar();
+            renderDiagnosisList();
+            renderChecks();
+            updateView();
+            lucide.createIcons();
+        }
+
+        // --- Navigation Logic ---
+        function renderSidebar() {
+            sidebarNav.innerHTML = steps.map(step => {
                 const isActive = activeStep === step.id;
                 const isPast = activeStep > step.id;
                 
-                return (
-                  <button
-                    key={step.id}
-                    onClick={() => setActiveStep(step.id)}
-                    className={`flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl transition-all flex-shrink-0 md:flex-shrink
-                      ${isActive 
-                        ? 'bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-900/20 font-medium' 
-                        : isPast
-                          ? 'bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                          : 'bg-slate-900 text-slate-400 hover:bg-slate-800 hover:text-slate-200'
-                      }`}
-                  >
-                    <Icon size={20} className={isActive ? 'text-white' : isPast ? 'text-amber-600' : 'text-slate-500'} />
-                    <span className="whitespace-nowrap">{step.title}</span>
-                    {isActive && <ChevronRight size={16} className="ml-auto opacity-70 hidden md:block" />}
-                  </button>
-                );
-              })}
-            </nav>
-
-            {/* UPGRADE TEASER */}
-            <div className="mt-8 p-5 bg-gradient-to-br from-slate-800 to-slate-900 rounded-xl border border-slate-700 relative overflow-hidden hidden md:block group cursor-not-allowed">
-              <div className="absolute -right-4 -top-4 text-slate-700/30 transform rotate-12 group-hover:scale-110 transition-transform">
-                <BarChart size={100} />
-              </div>
-              <h4 className="text-white font-bold text-sm mb-2 flex items-center gap-2 relative z-10">
-                <Lock size={14} className="text-amber-500" /> IA XTREMA PRO
-              </h4>
-              <ul className="text-xs text-slate-400 space-y-2 relative z-10">
-                <li>• Dashboard de Conversão</li>
-                <li>• Análise de Objeções via IA</li>
-                <li>• Qualificação Automática (SDR)</li>
-                <li>• Smart CRM Integrado</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        {/* Content Area */}
-        <div className="md:col-span-8 lg:col-span-9">
-          <div className="bg-slate-900 rounded-2xl border border-slate-800 shadow-xl min-h-[500px] flex flex-col">
-            
-            {/* Dynamic Content Views */}
-            <div className="p-6 md:p-8 flex-1">
-              {activeStep === 1 && <RapportView />}
-              {activeStep === 2 && <QualificacaoView />}
-              {activeStep === 3 && <DiagnosticoView />}
-              {activeStep === 4 && <ConfirmacaoView />}
-              {activeStep === 5 && <NegociacaoView />}
-              {activeStep === 6 && <FechamentoView />}
-            </div>
-
-            {/* Next/Prev Navigation Footer */}
-            <div className="border-t border-slate-800 p-4 md:p-6 bg-slate-900/50 rounded-b-2xl flex justify-between items-center">
-              <button
-                onClick={() => setActiveStep(Math.max(1, activeStep - 1))}
-                disabled={activeStep === 1}
-                className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white disabled:opacity-30 transition-colors"
-              >
-                Voltar
-              </button>
-              
-              {activeStep < steps.length ? (
-                <button
-                  onClick={() => setActiveStep(Math.min(steps.length, activeStep + 1))}
-                  className="px-6 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2 border border-slate-700"
-                >
-                  Próxima Etapa <ChevronRight size={16} />
-                </button>
-              ) : (
-                <div className="text-amber-500 flex items-center gap-2 font-medium">
-                  <Target size={18} /> Finalizar Processo
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Footer credits */}
-          <div className="mt-8 text-center md:text-left text-slate-500 text-xs flex flex-col md:flex-row justify-between items-center gap-2 border-t border-slate-800/50 pt-4">
-            <p>Framework Operacional • Mapa da Conversão XTREMA</p>
-            <p>Uso Exclusivo Consultores <strong>Marcos Medeiros</strong></p>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
-}
-
-function RapportView() {
-  return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex justify-between items-start">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-1">1. Rapport & Setup</h2>
-          <p className="text-slate-400 text-sm">Estabeleça o controle e o frame da reunião.</p>
-        </div>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
-        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex gap-4 items-start">
-          <div className="bg-slate-700/50 p-2 rounded-lg text-slate-300"><MessageCircle size={20} /></div>
-          <div>
-            <h4 className="text-white font-medium mb-1">Ancoragem de Contexto</h4>
-            <p className="text-xs text-slate-400">Assuntos do momento, background visual do cliente, cidade.</p>
-          </div>
-        </div>
-        <div className="bg-slate-800 p-5 rounded-xl border border-slate-700 flex gap-4 items-start">
-          <div className="bg-slate-700/50 p-2 rounded-lg text-slate-300"><Target size={20} /></div>
-          <div>
-            <h4 className="text-white font-medium mb-1">Escuta Ativa Primária</h4>
-            <p className="text-xs text-slate-400">Captar jargões e tom de voz para espelhamento imediato.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-slate-900/50 border border-slate-800 p-4 rounded-xl flex items-center justify-between opacity-60">
-        <div className="flex items-center gap-3">
-          <Lock size={16} className="text-slate-500" />
-          <span className="text-sm text-slate-400 font-medium">Auto-Transcritor e Análise de Perfil Emocional</span>
-        </div>
-        <span className="text-xs bg-slate-800 px-2 py-1 rounded text-slate-500">PRO</span>
-      </div>
-    </div>
-  );
-}
-
-function QualificacaoView() {
-  const [decision, setDecision] = useState(null); 
-  const [finance, setFinance] = useState(null);   
-  const isQualified = decision === 'yes' && finance === 'yes';
-  const isDisqualified = decision === 'no' || finance === 'no';
-
-  const reset = () => {
-    setDecision(null);
-    setFinance(null);
-  };
-
-  return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex justify-between items-start">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-1">2. Filtro de Qualificação</h2>
-          <p className="text-slate-400 text-sm">Validação dos pilares operacionais (B.A.N.T).</p>
-        </div>
-        {(decision || finance) && (
-          <button onClick={reset} className="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-slate-800 px-3 py-1.5 rounded-lg transition-colors">
-            <RotateCcw size={14} /> Reset
-          </button>
-        )}
-      </div>
-
-      <div className="space-y-6 mt-6">
-        
-        {/* Decision Power */}
-        <div className={`p-5 rounded-xl border transition-all duration-300 ${decision ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-800 border-slate-600'}`}>
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-base font-bold text-white">A. Poder Decisório</h3>
-          </div>
-          
-          <div className="flex gap-4">
-            <button 
-              onClick={() => setDecision('yes')}
-              className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors flex justify-center items-center gap-2 border ${decision === 'yes' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/50' : decision === 'no' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
-            >
-              {decision === 'yes' && <CheckCircle2 size={16} />} Titular da Decisão
-            </button>
-            <button 
-              onClick={() => setDecision('no')}
-              className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors flex justify-center items-center gap-2 border ${decision === 'no' ? 'bg-red-600/20 text-red-400 border-red-500/50' : decision === 'yes' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
-            >
-              {decision === 'no' && <XCircle size={16} />} Terceirizado/Dependente
-            </button>
-          </div>
-        </div>
-
-        {/* Financial Power */}
-        {decision === 'yes' && (
-          <div className={`p-5 rounded-xl border transition-all duration-300 animate-in fade-in slide-in-from-top-4 ${finance ? 'bg-slate-800/30 border-slate-700/50' : 'bg-slate-800 border-slate-600'}`}>
-            <h3 className="text-base font-bold text-white mb-4">B. Capacidade de Investimento</h3>
-            
-            <div className="flex gap-4">
-              <button 
-                onClick={() => setFinance('yes')}
-                className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors flex justify-center items-center gap-2 border ${finance === 'yes' ? 'bg-emerald-600/20 text-emerald-400 border-emerald-500/50' : finance === 'no' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
-              >
-                {finance === 'yes' && <CheckCircle2 size={16} />} Possui Capital Alocado
-              </button>
-              <button 
-                onClick={() => setFinance('no')}
-                className={`flex-1 py-2.5 px-4 rounded-lg text-sm font-medium transition-colors flex justify-center items-center gap-2 border ${finance === 'no' ? 'bg-red-600/20 text-red-400 border-red-500/50' : finance === 'yes' ? 'opacity-30 bg-slate-900 border-slate-700' : 'bg-slate-700 hover:bg-slate-600 border-slate-600 text-white'}`}
-              >
-                {finance === 'no' && <XCircle size={16} />} Sem Viabilidade
-              </button>
-            </div>
-          </div>
-        )}
-
-        {/* Status Result */}
-        {isDisqualified && (
-           <div className="bg-red-950/40 border border-red-900/50 rounded-xl p-4 text-center animate-in zoom-in-95 flex items-center justify-center gap-3">
-             <AlertTriangle className="text-red-500" size={24} />
-             <div className="text-left">
-                <h4 className="text-red-400 font-bold text-sm">Desqualificação Imediata</h4>
-                <p className="text-red-300/70 text-xs">Acionar protocolo de encerramento amigável ou Downsell rápido.</p>
-             </div>
-           </div>
-        )}
-
-        {isQualified && (
-           <div className="bg-emerald-950/30 border border-emerald-900/50 rounded-xl p-4 text-center animate-in zoom-in-95 flex items-center justify-center gap-3">
-             <CheckCircle className="text-emerald-500" size={24} />
-             <div className="text-left">
-               <h4 className="text-emerald-400 font-bold text-sm">Lead Qualificado (Go)</h4>
-               <p className="text-emerald-300/70 text-xs">Avançar para Diagnóstico e mapeamento de dores.</p>
-             </div>
-           </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function DiagnosticoView() {
-  const [activeLevel, setActiveLevel] = useState(1);
-
-  return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 flex flex-col h-full">
-      <div className="flex justify-between items-end">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-1">3. Mapeamento e Diagnóstico</h2>
-          <p className="text-slate-400 text-sm">Identificação do nível de consciência e abordagem tática.</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-4 flex-1">
-        
-        {/* Levels List */}
-        <div className="lg:col-span-5 space-y-2">
-          {diagnosisLevels.map((level) => (
-            <button
-              key={level.id}
-              onClick={() => setActiveLevel(level.id)}
-              className={`w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between ${
-                activeLevel === level.id 
-                  ? `${level.color} border-amber-500/50 shadow-md`
-                  : 'bg-slate-800 border-slate-700 hover:bg-slate-750'
-              }`}
-            >
-              <h4 className={`font-bold text-sm ${activeLevel === level.id ? 'text-white' : 'text-slate-400'}`}>
-                {level.title}
-              </h4>
-              {activeLevel === level.id && <ChevronRight size={16} className="text-amber-500" />}
-            </button>
-          ))}
-        </div>
-
-        {/* Level Action Prompt */}
-        <div className="lg:col-span-7">
-          {diagnosisLevels.map((level) => (
-             activeLevel === level.id && (
-              <div key={level.id} className="bg-slate-800/80 border border-slate-700 rounded-2xl p-6 h-full animate-in fade-in zoom-in-95 duration-300 flex flex-col justify-center relative overflow-hidden">
-                <div className="absolute left-0 top-0 bottom-0 w-1 bg-amber-500"></div>
-                <h3 className="text-slate-500 text-xs uppercase font-bold tracking-wider mb-2">Instrução Tática</h3>
-                <p className="text-white text-lg font-medium leading-relaxed">{level.action}</p>
+                let baseClasses = "flex items-center gap-3 w-full text-left px-4 py-3 rounded-xl transition-all flex-shrink-0 md:flex-shrink cursor-pointer border ";
                 
-                {/* Text area mockup for Pro version */}
-                <div className="mt-8 border border-slate-700/50 bg-slate-900 rounded-xl p-4 opacity-50 relative group">
-                  <div className="absolute inset-0 bg-slate-950/80 backdrop-blur-[1px] flex items-center justify-center rounded-xl z-10">
-                    <span className="text-xs font-bold text-slate-400 flex items-center gap-2"><Lock size={14}/> Gerador de Argumentos IA - Exclusivo PRO</span>
-                  </div>
-                  <div className="h-20 text-slate-600 text-sm">Anotações ao vivo do cliente...</div>
-                </div>
-              </div>
-             )
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
+                if (isActive) {
+                    baseClasses += "bg-gradient-to-r from-amber-600 to-amber-500 text-white shadow-lg shadow-amber-900/20 font-bold border-amber-500";
+                } else if (isPast) {
+                    baseClasses += "bg-slate-800/50 text-slate-400 hover:bg-slate-800 hover:text-slate-200 border-transparent";
+                } else {
+                    baseClasses += "bg-slate-900 text-slate-500 hover:bg-slate-800 hover:text-slate-300 border-transparent";
+                }
 
-function ConfirmacaoView() {
-  const [checks, setChecks] = useState({
-    sim1: false,
-    sim2: false,
-    sim3: false
-  });
+                const iconColor = isActive ? 'text-white' : (isPast ? 'text-amber-500' : 'text-slate-600');
 
-  const toggleCheck = (key) => setChecks(prev => ({ ...prev, [key]: !prev[key] }));
+                return `
+                    <button onclick="goToStep(${step.id})" class="${baseClasses}">
+                        <i data-lucide="${step.icon}" class="w-5 h-5 ${iconColor}"></i>
+                        <span class="whitespace-nowrap text-xs md:text-sm">${step.title}</span>
+                        ${isActive ? `<i data-lucide="chevron-right" class="w-4 h-4 ml-auto opacity-70 hidden md:block"></i>` : ''}
+                    </button>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
 
-  return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-1">4. Consolidação Lógica e Emocional</h2>
-        <p className="text-slate-400 text-sm">Micro-acordos e contraste de cenários.</p>
-      </div>
+        function updateView() {
+            // Hide all, show active
+            document.querySelectorAll('.step-view').forEach(el => el.classList.add('hidden-view'));
+            document.getElementById(`view-${activeStep}`).classList.remove('hidden-view');
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        
-        {/* Heaven and Hell */}
-        <div className="space-y-4">
-          <div className="bg-emerald-950/20 border border-emerald-900/50 p-5 rounded-xl border-l-4 border-l-emerald-500">
-            <h4 className="text-emerald-400 font-bold flex items-center gap-2 mb-1 text-sm uppercase tracking-wider">
-              O Sonho (Céu)
-            </h4>
-            <p className="text-slate-300 font-medium text-sm">
-              Escavar a motivação raiz (o que vem ANTES da solução técnica).
-            </p>
-          </div>
+            // Update footer buttons
+            if (activeStep === 1) {
+                btnPrev.disabled = true;
+                btnPrev.classList.add('cursor-not-allowed', 'opacity-50');
+                btnPrev.classList.remove('text-slate-300');
+            } else {
+                btnPrev.disabled = false;
+                btnPrev.classList.remove('cursor-not-allowed', 'opacity-50');
+                btnPrev.classList.add('text-slate-300');
+            }
 
-          <div className="bg-red-950/20 border border-red-900/50 p-5 rounded-xl border-l-4 border-l-red-500">
-            <h4 className="text-red-400 font-bold flex items-center gap-2 mb-1 text-sm uppercase tracking-wider">
-              A Transformação (Inferno)
-            </h4>
-            <p className="text-slate-300 font-medium text-sm">
-              Evidenciar subtilmente a ineficiência e o custo fatal de permanecer inerte.
-            </p>
-          </div>
-        </div>
+            if (activeStep === steps.length) {
+                btnNext.classList.add('hidden');
+                finishMsg.classList.remove('hidden');
+            } else {
+                btnNext.classList.remove('hidden');
+                finishMsg.classList.add('hidden');
+            }
 
-        {/* The 3 Yeses */}
-        <div className="bg-slate-800 border border-slate-700 rounded-xl p-5">
-          <h3 className="text-sm font-bold text-amber-500 uppercase tracking-wider mb-4">Framework "3 SIMs"</h3>
-          
-          <div className="space-y-2">
-            {[
-              { id: 'sim1', desc: '"O plano de ação que criamos juntos hoje faz sentido pra te ajudar a superar seus desafios e resolver os seus problemas?"' },
-              { id: 'sim2', desc: '"Temos 2 caminhos: 1. Ficar parado e ter [X] custo até [X] dia. 2. Aplicar o que montamos comigo e conseguir o resultado [X] em [X] dias."' },
-              { id: 'sim3', desc: '"Você tem certeza que eu sou a pessoa certa que vai te ajudar a chegar nesse resultado [X] em [X] dias mesmo?"' }
-            ].map((item, index) => (
-              <label 
-                key={item.id}
-                className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all duration-200
-                  ${checks[item.id] ? 'bg-amber-900/20 border-amber-500/50' : 'bg-slate-900/50 border-slate-700 hover:bg-slate-800'}`}
-              >
-                <div className="mt-0.5 shrink-0">
-                  <div className={`w-5 h-5 rounded border flex items-center justify-center transition-colors
-                    ${checks[item.id] ? 'bg-amber-500 border-amber-500 text-white' : 'border-slate-500 bg-slate-800'}`}>
-                    {checks[item.id] && <CheckCircle2 size={14} />}
-                  </div>
-                  <input type="checkbox" className="hidden" checked={checks[item.id]} onChange={() => toggleCheck(item.id)} />
-                </div>
-                <div className="text-sm text-slate-300 font-medium leading-snug">
-                  {item.desc}
-                </div>
-              </label>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+            renderSidebar();
+        }
 
-function NegociacaoView() {
-  return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div>
-        <h2 className="text-2xl font-bold text-white mb-1">5. Ancoragem de Preço</h2>
-        <p className="text-slate-400 text-sm">Estabelecimento de referência de valor vs preço final.</p>
-      </div>
+        function goToStep(step) {
+            activeStep = step;
+            updateView();
+        }
 
-      <div className="mt-6 bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
-        <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-700/50">
-          
-          <div className="p-6 md:p-8 flex flex-col justify-center hover:bg-slate-800/80 transition-colors">
-            <span className="text-slate-500 text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-              Passo 1
-            </span>
-            <h4 className="text-white text-lg font-bold mb-2">Ancoragem da Solução</h4>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Baseada no custo técnico da sua entrega.
-            </p>
-            <div className="mt-4 bg-slate-900/50 p-3 rounded-lg border border-slate-700/50">
-              <p className="text-xs text-slate-300">
-                <span className="text-amber-500 font-bold">EX:</span> "Se a minha hora custa R$1.000, 12 horas minhas valem R$12.000. Criei um acompanhamento de X meses por apenas R$4.000."
-              </p>
-            </div>
-          </div>
+        function nextStep() { if (activeStep < steps.length) goToStep(activeStep + 1); }
+        function prevStep() { if (activeStep > 1) goToStep(activeStep - 1); }
 
-          <div className="p-6 md:p-8 flex flex-col justify-center relative overflow-hidden bg-gradient-to-br from-amber-900/10 to-transparent">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/5 blur-[50px] rounded-full"></div>
-            <span className="text-amber-500 text-xs font-bold uppercase tracking-wider mb-3 flex items-center gap-2">
-              Passo 2
-            </span>
-            <h4 className="text-white text-lg font-bold mb-2">Ancoragem da Transformação</h4>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              Baseada no custo/valor do objetivo final do cliente.
-            </p>
-            <div className="mt-4 bg-amber-950/30 p-3 rounded-lg border border-amber-900/30">
-              <p className="text-xs text-slate-300">
-                <span className="text-amber-500 font-bold">EX:</span> "Se o objetivo é um veículo de 100k, force-o a admitir a falta de condição atual, mas mostre que a solução gera a viabilidade em X dias."
-              </p>
-            </div>
-          </div>
+        // --- Step 2: Qualificação Logic ---
+        function setQualDecision(val) {
+            qualDecision = val;
+            document.getElementById('btn-reset-qual').classList.remove('hidden');
+            document.getElementById('box-finance').classList.remove('hidden');
+            
+            // UI Updates
+            const btnYes = document.getElementById('btn-dec-yes');
+            const btnNo = document.getElementById('btn-dec-no');
+            const box = document.getElementById('box-decision');
+            
+            box.classList.replace('bg-slate-800', 'bg-slate-800/30');
+            box.classList.replace('border-slate-600', 'border-slate-700/50');
 
-        </div>
-      </div>
-    </div>
-  );
-}
+            if (val === 'yes') {
+                btnYes.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-emerald-600/20 text-emerald-400 border-emerald-500/50";
+                btnNo.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border opacity-30 bg-slate-900 border-slate-700 text-slate-500";
+            } else {
+                btnNo.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-red-600/20 text-red-400 border-red-500/50";
+                btnYes.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border opacity-30 bg-slate-900 border-slate-700 text-slate-500";
+            }
+            checkQualificationStatus();
+        }
 
-function FechamentoView() {
-  return (
-    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div className="flex justify-between items-center">
-        <div>
-          <h2 className="text-2xl font-bold text-white mb-1">6. Pitch & Objeções</h2>
-          <p className="text-slate-400 text-sm">Call to Action (CTA) definitivo e manobras táticas.</p>
-        </div>
-      </div>
+        function setQualFinance(val) {
+            qualFinance = val;
+            
+            const btnYes = document.getElementById('btn-fin-yes');
+            const btnNo = document.getElementById('btn-fin-no');
+            const box = document.getElementById('box-finance');
+            
+            box.classList.replace('bg-slate-800', 'bg-slate-800/30');
+            box.classList.replace('border-slate-600', 'border-slate-700/50');
 
-      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        {/* Action column */}
-        <div className="space-y-4">
-          <div className="bg-slate-800 border-l-4 border-amber-500 rounded-r-xl p-6 shadow-lg relative overflow-hidden">
-            <h3 className="text-amber-500 text-sm font-bold uppercase tracking-wider mb-1">
-              Comando Final
-            </h3>
-            <p className="text-white text-xl font-medium mt-2">
-              Faça a oferta de forma direta e <br/>
-              <strong className="text-amber-400 text-2xl">FIQUE EM SILÊNCIO.</strong>
-            </p>
-          </div>
+            if (val === 'yes') {
+                btnYes.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-emerald-600/20 text-emerald-400 border-emerald-500/50";
+                btnNo.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border opacity-30 bg-slate-900 border-slate-700 text-slate-500";
+            } else {
+                btnNo.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-red-600/20 text-red-400 border-red-500/50";
+                btnYes.className = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border opacity-30 bg-slate-900 border-slate-700 text-slate-500";
+            }
+            checkQualificationStatus();
+        }
 
-          <div className="bg-slate-800/50 rounded-xl p-5 border border-slate-700 text-sm text-slate-300">
-             <span className="font-bold text-white mb-2 block">Protocolo de Fechamento:</span>
-             1. Confiança e tom de voz inabalável.<br/>
-             2. Link/Contrato aberto em aba paralela.<br/>
-             3. Aja como se a venda já estivesse 100% concretizada.
-          </div>
-        </div>
+        function checkQualificationStatus() {
+            const resultDis = document.getElementById('result-disqualified');
+            const resultQual = document.getElementById('result-qualified');
+            
+            resultDis.classList.add('hidden');
+            resultQual.classList.add('hidden');
 
-        {/* Objections Column */}
-        <div className="bg-slate-900 border border-slate-700 rounded-xl p-5 relative overflow-hidden">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-sm font-bold text-white uppercase tracking-wider">Manobras de Contorno</h3>
-            <span className="bg-amber-500/20 text-amber-500 text-[10px] font-bold px-2 py-0.5 rounded flex items-center gap-1"><Lock size={10}/> IA ASSIST</span>
-          </div>
-          
-          <div className="space-y-2">
-            {[
-              { obj: 'Está caro / Sem dinheiro', ans: 'Volte à Calculadora de Inércia. Isole: "Tirando o valor, algo mais impede?"' },
-              { obj: 'Vou pensar', ans: 'Drible: "Geralmente isso é dúvida. O que faltou esclarecer hoje?"' },
-              { obj: 'Preciso falar com X', ans: 'Falha na Qualificação. Agende call secundária imediata com decisor.' },
-            ].map((item, i) => (
-              <div key={i} className="border border-slate-800 bg-slate-800/30 rounded-lg p-3 hover:border-slate-600 transition-colors">
-                <h5 className="font-bold text-slate-300 text-xs mb-1">
-                  {item.obj}
-                </h5>
-                <p className="text-xs text-slate-400">
-                  {item.ans}
-                </p>
-              </div>
-            ))}
-          </div>
+            if (qualDecision === 'no' || qualFinance === 'no') {
+                resultDis.classList.remove('hidden');
+            } else if (qualDecision === 'yes' && qualFinance === 'yes') {
+                resultQual.classList.remove('hidden');
+            }
+        }
 
-          {/* Premium overlay for more objections */}
-          <div className="mt-4 pt-4 border-t border-slate-800 text-center">
-             <button className="text-xs text-amber-500 font-bold hover:text-amber-400 flex justify-center items-center gap-1 w-full opacity-60">
-                <Lock size={12}/> Desbloquear Banco de Objeções (150+ scripts)
-             </button>
-          </div>
-        </div>
+        function resetQualificacao() {
+            qualDecision = null;
+            qualFinance = null;
+            
+            document.getElementById('btn-reset-qual').classList.add('hidden');
+            document.getElementById('box-finance').classList.add('hidden');
+            document.getElementById('result-disqualified').classList.add('hidden');
+            document.getElementById('result-qualified').classList.add('hidden');
+            
+            const defaultBtn = "flex-1 py-3 px-4 rounded-lg text-xs font-bold transition-colors flex justify-center items-center gap-2 border bg-slate-700 hover:bg-slate-600 border-slate-600 text-white";
+            
+            document.getElementById('btn-dec-yes').className = defaultBtn;
+            document.getElementById('btn-dec-no').className = defaultBtn;
+            document.getElementById('btn-fin-yes').className = defaultBtn;
+            document.getElementById('btn-fin-no').className = defaultBtn;
+            
+            const boxes = [document.getElementById('box-decision'), document.getElementById('box-finance')];
+            boxes.forEach(b => {
+                b.classList.replace('bg-slate-800/30', 'bg-slate-800');
+                b.classList.replace('border-slate-700/50', 'border-slate-600');
+            });
+        }
 
-      </div>
-    </div>
-  );
-}
+        // --- Step 3: Diagnóstico Logic ---
+        function renderDiagnosisList() {
+            const container = document.getElementById('diag-buttons');
+            container.innerHTML = diagnosisLevels.map(level => {
+                const isActive = level.id === activeDiagLevel;
+                const baseClass = isActive 
+                    ? 'bg-slate-700 border-amber-500/50 shadow-md text-white' 
+                    : 'bg-slate-800 border-slate-700 hover:bg-slate-750 text-slate-400';
+                
+                return `
+                    <button onclick="setDiagLevel(${level.id})" class="w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between ${baseClass}">
+                        <h4 class="font-bold text-xs">${level.title}</h4>
+                        ${isActive ? `<i data-lucide="chevron-right" class="w-4 h-4 text-amber-500"></i>` : ''}
+                    </button>
+                `;
+            }).join('');
+            
+            const activeData = diagnosisLevels.find(l => l.id === activeDiagLevel);
+            document.getElementById('diag-action-text').innerText = activeData.action;
+            lucide.createIcons();
+        }
+
+        function setDiagLevel(id) {
+            activeDiagLevel = id;
+            renderDiagnosisList();
+        }
+
+        // --- Step 4: Confirmação Logic ---
+        function renderChecks() {
+            const container = document.getElementById('checks-container');
+            container.innerHTML = confirmQuestions.map(item => {
+                const isChecked = checkState[item.id];
+                const boxClass = isChecked ? 'bg-amber-900/20 border-amber-500/50' : 'bg-slate-900/50 border-slate-700 hover:bg-slate-800';
+                const checkClass = isChecked ? 'bg-amber-500 border-amber-500 text-white' : 'border-slate-500 bg-slate-800';
+                
+                return `
+                    <label class="flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all duration-200 ${boxClass}">
+                        <div class="mt-0.5 shrink-0">
+                            <div class="w-5 h-5 rounded border flex items-center justify-center transition-colors ${checkClass}">
+                                ${isChecked ? `<i data-lucide="check" class="w-3.5 h-3.5"></i>` : ''}
+                            </div>
+                            <input type="checkbox" class="hidden" ${isChecked ? 'checked' : ''} onchange="toggleCheck('${item.id}')">
+                        </div>
+                        <div class="text-[11px] md:text-xs text-slate-300 font-medium leading-relaxed italic">
+                            ${item.text}
+                        </div>
+                    </label>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function toggleCheck(id) {
+            checkState[id] = !checkState[id];
+            renderChecks();
+        }
+
+        // Start the app
+        window.onload = init;
+    </script>
+</body>
+</html>
